@@ -1,0 +1,19 @@
+.fullscreen-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    padding: 1em 2em;
+    font-size: 1.2rem;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none;
+}
+
+.fullscreen-button.visible {
+    display: block;
+}

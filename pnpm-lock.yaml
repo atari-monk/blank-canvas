@@ -10,6 +10,10 @@ overrides:
 importers:
 
   .:
+    dependencies:
+      zippy-shared-lib:
+        specifier: ^0.2.3
+        version: 0.2.3
     devDependencies:
       typescript:
         specifier: ~5.9.3
@@ -297,6 +301,9 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  zippy-shared-lib@0.2.3:
+    resolution: {integrity: sha512-Q03BvdMv7XFhI8sWilUGF2w0NVeJ+WV0sLH4NYUMumXX1RBgCl5SOF3OyNLQOGZyC8EJKJGiOmdiH+rwBXmGiw==}
+
 snapshots:
 
   '@emnapi/core@1.5.0':
@@ -493,3 +500,5 @@ snapshots:
     optional: true
 
   typescript@5.9.3: {}
+
+  zippy-shared-lib@0.2.3: {}

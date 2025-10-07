@@ -11,9 +11,9 @@ importers:
 
   .:
     dependencies:
-      zippy-shared-lib:
-        specifier: ^0.2.3
-        version: 0.2.3
+      zippy-shared:
+        specifier: ^0.0.3
+        version: 0.0.3
     devDependencies:
       cpx:
         specifier: ^1.5.0
@@ -886,8 +886,8 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  zippy-shared-lib@0.2.3:
-    resolution: {integrity: sha512-Q03BvdMv7XFhI8sWilUGF2w0NVeJ+WV0sLH4NYUMumXX1RBgCl5SOF3OyNLQOGZyC8EJKJGiOmdiH+rwBXmGiw==}
+  zippy-shared@0.0.3:
+    resolution: {integrity: sha512-5OWahMITasiAq2DGbB5NuOz/2vKrhVNzPnZxf2jAunDiucp0jXsHC76qHJ8KoxXaSybfcGNIgzZs4mXp5DZq4g==}
 
 snapshots:
 
@@ -1757,4 +1757,4 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  zippy-shared-lib@0.2.3: {}
+  zippy-shared@0.0.3: {}

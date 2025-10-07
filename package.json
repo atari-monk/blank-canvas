@@ -1,6 +1,6 @@
 {
     "name": "zippy-canvas",
-    "version": "0.0.4",
+    "version": "0.0.6",
     "type": "module",
     "main": "./dist/index.js",
     "module": "./dist/index.js",
@@ -15,10 +15,11 @@
         "build": "tsc -p tsconfig.lib.json && cpx \"src/*.css\" dist/",
         "type-check": "tsc --noEmit",
         "dev": "vite",
+        "build-vite": "tsc && vite build",
         "preview": "vite preview"
     },
     "dependencies": {
-        "zippy-shared-lib": "^0.2.3"
+        "zippy-shared": "^0.0.3"
     },
     "devDependencies": {
         "typescript": "~5.9.3",

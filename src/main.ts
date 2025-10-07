@@ -1,7 +1,7 @@
 import "./style.css";
 import "./canvas.css";
 import "./fullscreen-button.css";
-import { createAnimatedCanvas } from "./create-anim-canvas";
+import { createCanvas } from "./create-canvas";
 import { HelloCanvas } from "./hello-canvas";
 import { ResizeTest } from "./resize-test";
 import { RotatingRect } from "./rotating-rect";
@@ -13,11 +13,10 @@ const renders = [
 ];
 
 let currentIndex = 0;
-const canvasComponent = createAnimatedCanvas(renders[0].instance);
+const { container, canvas, renderLoop } = createCanvas(renders[0].instance, false);
 
-// Create simple button
 const switchButton = document.createElement("button");
-switchButton.textContent = `Switch to ${renders[1].name}`;
+switchButton.textContent = `➡️ ${renders[1].name}`;
 switchButton.style.cssText = `
   position: fixed;
   top: 10px;
@@ -29,12 +28,19 @@ switchButton.style.cssText = `
 switchButton.onclick = () => {
     currentIndex = (currentIndex + 1) % renders.length;
 
-    canvasComponent.switchRenderer(renders[currentIndex].instance);
+    renderLoop.switchRender(renders[currentIndex].instance);
 
-    switchButton.textContent = `Switch to ${
+    switchButton.textContent = `➡️ ${
         renders[(currentIndex + 1) % renders.length].name
     }`;
 };
 
-document.getElementById("root")?.appendChild(canvasComponent);
+document.getElementById("root")?.appendChild(container);
 document.getElementById("root")?.appendChild(switchButton);
+
+const startOnReady = () => {
+    renderLoop.start();
+    canvas.removeEventListener("canvas-resized", startOnReady);
+};
+
+canvas.addEventListener("canvas-resized", startOnReady);

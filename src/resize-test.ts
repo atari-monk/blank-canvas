@@ -1,4 +1,4 @@
-import type { Frame, Render } from "zippy-shared-lib";
+import type { Frame, Render } from "zippy-shared";
 
 export class ResizeTest implements Render {
     private readonly fontSize: string = "20px Arial";
@@ -7,30 +7,14 @@ export class ResizeTest implements Render {
     private cornerMarkers: { x: number; y: number }[] = [];
 
     init(frame: Frame) {
-        this.handleResize(frame.width, frame.height);
-
-        const handleCanvasResized = (event: Event) => {
-            const customEvent = event as CustomEvent<{
-                width: number;
-                height: number;
-                pixelRatio: number;
-            }>;
-            this.handleResize(
-                customEvent.detail.width,
-                customEvent.detail.height
-            );
-        };
-
-        frame.ctx.canvas.addEventListener(
-            "canvas-resized",
-            handleCanvasResized
-        );
+        this.handleResize(frame.ctx);
+        frame.ctx.canvas.addEventListener("canvas-resized", () => {
+            this.handleResize(frame.ctx);
+        });
     }
 
-    private handleResize(
-        width: number,
-        height: number
-    ) {
+    private handleResize(ctx: CanvasRenderingContext2D) {
+        const { width, height } = ctx.canvas;
         // Update corner markers for the new size
         this.cornerMarkers = [
             { x: 10, y: 10 }, // top-left

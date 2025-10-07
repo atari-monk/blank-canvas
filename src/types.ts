@@ -1,4 +1,4 @@
-import type { Render } from "zippy-shared-lib";
+import type { Render } from "zippy-shared";
 
 export interface FrameTime {
     deltaTime: number;
@@ -6,13 +6,8 @@ export interface FrameTime {
     lastTime: number;
 }
 
-export interface CanvasRenderLoop {
+export interface RenderLoop {
     start: () => void;
     stop: () => void;
-    switchRenderer: (newRenderer: Render) => void;
-}
-
-export interface AnimatedCanvasContainer extends HTMLElement {
-    switchRenderer: (renderer: Render) => void;
-    cleanup: () => void;
+    switchRender: (newRender: Render) => void;
 }

@@ -1,4 +1,4 @@
-import type { Render, Frame } from "zippy-shared-lib";
+import type { Render, Frame } from "zippy-shared";
 
 export class RotatingRect implements Render {
     private rotation = 0;
@@ -8,27 +8,14 @@ export class RotatingRect implements Render {
     private centerY = 0;
 
     init(frame: Frame) {
-        this.handleResize(frame.width, frame.height);
-
-        const handleCanvasResized = (event: Event) => {
-            const customEvent = event as CustomEvent<{
-                width: number;
-                height: number;
-                pixelRatio: number;
-            }>;
-            this.handleResize(
-                customEvent.detail.width,
-                customEvent.detail.height
-            );
-        };
-
-        frame.ctx.canvas.addEventListener(
-            "canvas-resized",
-            handleCanvasResized
-        );
+        this.handleResize(frame.ctx);
+        frame.ctx.canvas.addEventListener("canvas-resized", () => {
+            this.handleResize(frame.ctx);
+        });
     }
 
-    private handleResize(width: number, height: number) {
+    private handleResize(ctx: CanvasRenderingContext2D) {
+        const { width, height } = ctx.canvas;
         this.centerX = width / 2;
         this.centerY = height / 2;
     }
@@ -72,15 +59,5 @@ export class RotatingRect implements Render {
 
         // Restore the context state
         ctx.restore();
-
-        // Add some info text
-        // ctx.fillStyle = "white";
-        // ctx.font = "16px Arial";
-        // ctx.textAlign = "center";
-        // ctx.fillText(
-        //     "Rotating Color Rectangle",
-        //     this.centerX,
-        //     this.centerY - 80
-        // );
     }
 }

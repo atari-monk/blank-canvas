@@ -4,7 +4,7 @@ A lightweight, responsive canvas animation library for creating dynamic, full-sc
 
 ## Features
 
-- 🎨 **Responsive Canvas** - Automatically adjusts to container size with proper pixel ratio handling
+- 🎨 **Responsive Canvas** - Automatically adjusts to container size
 - 🔄 **Smooth Animation Loop** - Optimized requestAnimationFrame-based rendering
 - 📱 **Fullscreen Support** - Touch device detection and fullscreen toggle
 - 🎯 **Renderer Switching** - Hot-swap renderers without losing state
@@ -20,13 +20,16 @@ npm install zippy-canvas
 ## Quick Start
 
 ```typescript
-import { createAnimatedCanvas, HelloCanvas } from 'zippy-canvas';
+import { createCanvas, HelloCanvas } from 'zippy-canvas';
 
 // Create a canvas with a renderer
-const canvas = createAnimatedCanvas(new HelloCanvas());
+const { container, renderLoop } = createCanvas(new HelloCanvas());
 
 // Add to your page
-document.getElementById('app')?.appendChild(canvas);
+document.getElementById('app')?.appendChild(container);
+
+// Start the animation loop
+renderLoop.start();
 ```
 
 ## Basic Usage
@@ -52,33 +55,49 @@ export class MyRenderer implements Render {
 }
 
 // Use your custom renderer
-const canvas = createAnimatedCanvas(new MyRenderer());
+const { container, renderLoop } = createCanvas(new MyRenderer());
+document.body.appendChild(container);
+renderLoop.start();
 ```
 
 ### Switching Between Renderers
 
 ```typescript
-import { createAnimatedCanvas, HelloCanvas, RotatingRect } from 'zippy-canvas';
+import { createCanvas, HelloCanvas, RotatingRect } from 'zippy-canvas';
 
-const canvas = createAnimatedCanvas(new HelloCanvas());
-const rotatingRect = new RotatingRect();
+const renders = [
+    new HelloCanvas(),
+    new RotatingRect()
+];
 
-// Switch renderers dynamically
-canvas.switchRenderer(rotatingRect);
+const { container, renderLoop } = createCanvas(renders[0]);
+document.body.appendChild(container);
+renderLoop.start();
+
+// Switch to another renderer
+renderLoop.switchRender(renders[1]);
 ```
 
 ## API Reference
 
 ### Core Functions
 
-#### `createAnimatedCanvas(renderer: Render): AnimatedCanvasContainer`
+#### `createCanvas(renderer: Render, showFullscreenBtn?: boolean)`
 Creates a new canvas container with the specified renderer.
 
-#### `setupCanvasResizer(canvas: HTMLCanvasElement): void`
-Sets up automatic canvas resizing based on container dimensions.
+Returns:
+- `container: HTMLDivElement` - The canvas container element
+- `canvas: HTMLCanvasElement` - The canvas element
+- `renderLoop: RenderLoop` - The animation loop controller
 
-#### `createCanvasRenderLoop(canvas: HTMLCanvasElement, renderer: Render): CanvasRenderLoop`
-Creates an animation loop for the canvas.
+#### `RenderLoop`
+```typescript
+interface RenderLoop {
+    start: () => void;
+    stop: () => void;
+    switchRender: (newRender: Render) => void;
+}
+```
 
 ### Interfaces
 
@@ -100,11 +119,6 @@ interface Frame {
     totalTime: number;
 }
 ```
-
-#### `AnimatedCanvasContainer`
-Extends HTMLElement with additional methods:
-- `switchRenderer(renderer: Render): void` - Switch to a new renderer
-- `cleanup(): void` - Stop the animation and clean up
 
 ## Included Demo Renderers
 
@@ -131,16 +145,16 @@ class MyResponsiveRenderer implements Render {
     private centerY = 0;
 
     init(frame: Frame) {
-        this.handleResize(frame.width, frame.height);
+        this.handleResize(frame.ctx);
         
         // Listen for resize events
-        frame.ctx.canvas.addEventListener('canvas-resized', (event) => {
-            const { width, height } = (event as CustomEvent).detail;
-            this.handleResize(width, height);
+        frame.ctx.canvas.addEventListener('canvas-resized', () => {
+            this.handleResize(frame.ctx);
         });
     }
 
-    private handleResize(width: number, height: number) {
+    private handleResize(ctx: CanvasRenderingContext2D) {
+        const { width, height } = ctx.canvas;
         this.centerX = width / 2;
         this.centerY = height / 2;
     }
@@ -187,6 +201,51 @@ The library includes minimal CSS for full-screen display. You can customize the 
     background-color: rgba(255, 255, 255, 0.2);
     border: 2px solid white;
 }
+```
+
+## Example Implementation
+
+Here's a complete example showing how to use the library with renderer switching:
+
+```typescript
+import { createCanvas, HelloCanvas, ResizeTest, RotatingRect } from 'zippy-canvas';
+
+const renders = [
+    { name: "Hello", instance: new HelloCanvas() },
+    { name: "Resize", instance: new ResizeTest() },
+    { name: "Rect", instance: new RotatingRect() },
+];
+
+let currentIndex = 0;
+const { container, canvas, renderLoop } = createCanvas(renders[0].instance, false);
+
+// Create a button to switch between renderers
+const switchButton = document.createElement("button");
+switchButton.textContent = `➡️ ${renders[1].name}`;
+switchButton.style.cssText = `
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+    padding: 8px 12px;
+`;
+
+switchButton.onclick = () => {
+    currentIndex = (currentIndex + 1) % renders.length;
+    renderLoop.switchRender(renders[currentIndex].instance);
+    switchButton.textContent = `➡️ ${renders[(currentIndex + 1) % renders.length].name}`;
+};
+
+document.body.appendChild(container);
+document.body.appendChild(switchButton);
+
+// Start the animation when canvas is ready
+const startOnReady = () => {
+    renderLoop.start();
+    canvas.removeEventListener("canvas-resized", startOnReady);
+};
+
+canvas.addEventListener("canvas-resized", startOnReady);
 ```
 
 ## Building from Source

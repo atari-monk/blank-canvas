@@ -2,9 +2,6 @@ import type { Render } from "zippy-shared";
 import { createLoop } from "./create-loop";
 import type { RenderLoop } from "./types";
 
-/*
-
-*/
 export function createCanvas(
     renderer: Render,
     showFullscreenBtn = false
